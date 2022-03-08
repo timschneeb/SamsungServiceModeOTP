@@ -7,6 +7,8 @@ Generate OTP tokens for Samsung Service Mode to activate hidden debug/dumping fe
 4. Use this program to generate an activation key using the nonce provided by the app (`java -jar SamsungServiceModeOTP.jar <nonce>`)
 5. Insert the generated key into the app and activate the locked features
 
+Note: The generated OTPs expire after a while and are calculated using time and date. Make sure the clock on your computer and phone are accurate and in the same timezone.
+
 Example:
 ```bash
 java -jar SamsungServiceModeOTP.jar yuh0h
