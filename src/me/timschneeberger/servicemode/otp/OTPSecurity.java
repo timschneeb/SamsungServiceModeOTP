@@ -1,42 +1,53 @@
 package me.timschneeberger.servicemode.otp;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+
 public class OTPSecurity {
-    public static boolean CheckOTP(String str, String str2) {
+    public static boolean checkOTP(String str, String str2) {
         int i = 5;
         while (true) {
-            int i2 = i - 1;
-            if (i <= -1) {
+            if (i <= -1)
                 return false;
-            }
-            if (str.equalsIgnoreCase(Integer.toString(MakeHashCode(String.valueOf(str2) + GetDateString(i2))))) {
+
+            i -= 1;
+            if (str.equalsIgnoreCase(Integer.toString(makeHashCode(str2 + getDateString(i)))))
                 return true;
-            }
-            i = i2;
         }
     }
 
-    public static String GetOTP(String basekey)
+    public static String getOTP(String basekey)
     {
-        return Integer.toString(MakeHashCode(String.valueOf(basekey) + GetDateString(4)));
+        return Integer.toString(makeHashCode(basekey + getDateString(4)));
     }
 
-    private static String GetDateString(int i) {
-        Calendar instance = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        instance.add(12, i * -1);
-        StringBuilder sb = new StringBuilder(String.valueOf(String.valueOf(new DecimalFormat("00").format((long) (instance.get(1) - 2000))) + new DecimalFormat("00").format((long) (instance.get(2) + 1))));
-        sb.append(new DecimalFormat("00").format((long) instance.get(12)));
-        return String.valueOf(String.valueOf(sb.toString()) + new DecimalFormat("00").format((long) instance.get(5))) + new DecimalFormat("00").format((long) instance.get(11));
+    public static String getExpireDate() {
+        LocalDateTime start = LocalDateTime.now(ZoneOffset.UTC).minusMinutes(4);
+        LocalDateTime end = start.plusHours(1).truncatedTo(ChronoUnit.HOURS);
+        return Long.toString(Duration.between(start, end).toMinutes()) + " minutes";
     }
 
-    private static int MakeHashCode(String str) {
-        int i = 0;
-        for (int i2 = 0; i2 < str.length(); i2++) {
-            i = str.charAt(i2) + (i << 5) + i;
+    private static String getDateString(int i) {
+        Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        calender.add(Calendar.MINUTE, -i);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHH");
+        dateFormat.setTimeZone(calender.getTimeZone());
+        return dateFormat.format(calender.getTime());
+    }
+
+    private static int makeHashCode(String str) {
+        int hashCode = 0;
+        for (char c : str.toCharArray()) {
+            hashCode = 31 * hashCode + c;
         }
-        return i < 0 ? i * -1 : i;
+        return Math.abs(hashCode);
     }
 }

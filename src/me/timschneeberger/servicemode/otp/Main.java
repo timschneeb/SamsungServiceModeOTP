@@ -9,12 +9,12 @@ public class Main {
             return;
         }
 
-        String otp = OTPSecurity.GetOTP(args[0]);
+        String otp = OTPSecurity.getOTP(args[0]);
         System.out.println("Decrypted one-time password: " + otp);
 
-        if(OTPSecurity.CheckOTP(otp, args[0]))
+        if(OTPSecurity.checkOTP(otp, args[0]))
         {
-            System.out.println("=> Key verified");
+            System.out.println("=> Key verified. OTP expires in " + OTPSecurity.getExpireDate() + ".");
         }
         else
         {

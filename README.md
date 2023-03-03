@@ -15,5 +15,5 @@ java -jar SamsungServiceModeOTP.jar yuh0h
 ```
 ```
 Decrypted one-time password: 2142664100
-=> Key verified
+=> Key verified. OTP expires in 13 minutes.
 ```
