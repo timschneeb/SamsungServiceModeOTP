@@ -1,7 +1,6 @@
 package me.timschneeberger.servicemode.otp;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,23 +30,24 @@ public class OTPSecurity {
     public static String getExpireDate() {
         LocalDateTime start = LocalDateTime.now(ZoneOffset.UTC).minusMinutes(4);
         LocalDateTime end = start.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-        return Long.toString(Duration.between(start, end).toMinutes()) + " minutes";
+        return Duration.between(start, end).toMinutes() + " minutes";
     }
 
     private static String getDateString(int i) {
-        Calendar calender = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        calender.add(Calendar.MINUTE, -i);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHH");
-        dateFormat.setTimeZone(calender.getTimeZone());
-        return dateFormat.format(calender.getTime());
+        Calendar instance = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        instance.add(Calendar.MINUTE, i * -1);
+        return new DecimalFormat("00").format(instance.get(Calendar.YEAR) - 2000) +
+                new DecimalFormat("00").format(instance.get(Calendar.MONTH) + 1) +
+                new DecimalFormat("00").format(instance.get(Calendar.MINUTE)) +
+                new DecimalFormat("00").format(instance.get(Calendar.DATE)) +
+                new DecimalFormat("00").format(instance.get(Calendar.HOUR_OF_DAY));
     }
 
     private static int makeHashCode(String str) {
-        int hashCode = 0;
-        for (char c : str.toCharArray()) {
-            hashCode = 31 * hashCode + c;
+        int i = 0;
+        for (int i2 = 0; i2 < str.length(); i2++) {
+            i = str.charAt(i2) + (i << 5) + i;
         }
-        return Math.abs(hashCode);
+        return i < 0 ? i * -1 : i;
     }
 }
